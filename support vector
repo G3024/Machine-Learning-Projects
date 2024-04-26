@@ -1,0 +1,67 @@
+from sklearn.datasets import load_iris
+import pandas as pd
+
+iris = load_iris()
+dir(iris)
+# ['DESCR', 'data', 'data_module', 'feature_names', 'filename', 'frame', 'target', 'target_names']
+
+
+iris.feature_names
+# ['sepal length (cm)', 'sepal width (cm)', 'petal length (cm)', 'petal width (cm)']
+
+data = pd.DataFrame(iris.data, columns=iris.feature_names)
+print(data)
+data = data.drop("target")
+# create some target as a new columns inside a data *DataFrame and put the iris target inside it
+data['target'] = iris.target 
+target = data['target']
+
+iris.target_names # ['setosa' 'versicolor' 'virginica']
+# setosa = 0
+# versicolor = 1
+# virginica = 2
+
+# seeing how many versicolor we have
+how_many_versicolor = data[data.target==1].head()
+# total 150 / 3 types = 50 per types
+
+
+data['flower_names'] = data.target.apply(lambda x: iris.target_names[x])
+
+from matplotlib import pyplot as plt
+
+# creating 3 dataframe by their types
+data_Setosa = data[data.target==0]
+data_versicolor = data[data.target==1]
+data_virginica = data[data.target==2]
+
+
+# plotting the sepal length
+plt.xlabel("sepal length (cm)")
+plt.ylabel('sepal width (cm)')
+plt.scatter(data_Setosa['sepal length (cm)'], data_Setosa['sepal width (cm)'], color='green', marker='+')
+plt.scatter(data_versicolor['sepal length (cm)'], data_versicolor['sepal width (cm)'], color='red', marker='.')
+plt.scatter(data_virginica['sepal length (cm)'], data_virginica['sepal width (cm)'], color='blue', marker='*')
+'''plt.show()'''
+
+# plotting the petal length
+plt.xlabel("petal length (cm)")
+plt.ylabel('petal width (cm)')
+plt.scatter(data_Setosa['petal length (cm)'], data_Setosa['petal width (cm)'], color='green', marker='+')
+plt.scatter(data_versicolor['petal length (cm)'], data_versicolor['petal width (cm)'], color='red', marker='.')
+plt.scatter(data_virginica['petal length (cm)'], data_virginica['petal width (cm)'], color='blue', marker='*')
+'''plt.show()'''
+
+# creating the model
+from sklearn.model_selection import train_test_split
+x = data
+print(x)
+target = data['target']
+X_train, X_test, y_train, y_test = train_test_split(x, target, test_size=0.2, random_state=0)
+len(X_train) # 120
+len(X_test) # 30
+
+from sklearn.svm import SVC
+model = SVC()
+'''model.fit(X_train, y_train)
+print(model.score(X_test, y_test))'''

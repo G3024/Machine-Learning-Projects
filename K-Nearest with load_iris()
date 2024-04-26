@@ -1,0 +1,66 @@
+import numpy as np
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+import pandas as pd
+
+data = load_iris()
+# ['DESCR', 'data', 'data_module', 'feature_names', 'filename', 'frame', 'target', 'target_names']
+
+
+X_train, X_test, y_train, y_test = train_test_split(data.data, data.target, train_size=0.3, random_state=0)
+len(X_train) # 45
+len(X_test) # 105
+
+from sklearn.gaussian_process import GaussianProcessClassifier
+# model
+Logistic_ = LogisticRegression()
+Forest_ = RandomForestClassifier(n_estimators=5)
+Super_vector = SVC(gamma = 'auto')
+gaus = GaussianProcessClassifier()
+
+# KF Class
+from sklearn.model_selection import KFold, StratifiedGroupKFold
+KF_ = KFold(n_splits=10)
+for train_index, test_index in KF_.split([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]):
+    train_index, test_index
+    
+    
+def get_score(model, X_train, X_test, y_train, y_test):
+    model.fit(X_train, y_train)
+    return model.score(X_test, y_test)
+
+score_logistic = []
+score_svc = []
+score_Random_Forest  =  []
+score_gaussian = []
+for train_index, test_index  in KF_.split(data.data, data.target):
+    X_train, X_test, y_train, y_test = data.data[train_index], data.data[test_index], data.target[train_index], data.target[test_index]
+    
+    score_logistic.append(get_score(LogisticRegression(), X_train, X_test, y_train, y_test))
+    score_svc.append(get_score(SVC(), X_train, X_test, y_train, y_test))
+    score_Random_Forest.append(get_score(RandomForestClassifier(), X_train, X_test, y_train, y_test))
+    score_gaussian.append(get_score(GaussianProcessClassifier(), X_train, X_test, y_train, y_test))
+
+
+from sklearn.model_selection import cross_val_score
+
+cross_val_score(LogisticRegression(), data.data, data.target)
+# [0.96666667 1.         0.93333333 0.96666667 1.        ]
+
+cross_val_score(SVC(gamma='auto'), data.data, data.target)
+# [0.96666667 0.96666667 0.96666667 0.93333333 1. 
+
+cross_val_score(RandomForestClassifier(n_estimators=100), data.data, data.target)
+
+SVC_average = np.average(score_svc)
+Random_average = np.average(score_Random_Forest)
+Logistic_average = np.average(score_logistic)
+Gaussian_average = np.average(score_gaussian)
+print(SVC_average, Random_average, Logistic_average, Gaussian_average)
+
+'''
+0.93 0.95 0.95 0.93
+'''

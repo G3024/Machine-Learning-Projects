@@ -1,0 +1,27 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+from math import sqrt
+# calculate euclidean
+def euclidean_distance(a, b):
+    return sqrt(sum((e1-e2)**2 for e1, e2 in zip(a,b)))
+# zip function to get your d1[0] and d2[0] get in partner and can do the calculation
+
+
+# define data
+d1 = [12, 8]        
+d2 = [20 , 10] 
+    
+# calculate distance
+dist = euclidean_distance(d1, d2)
+print(dist)
+
+
+def value(a,b):
+    return sqrt(sum((e1 - a1)**2 for e1,a1 in zip(a,b)))
+d1 = [12, 8]
+d2 = [20 , 10] 
+dis = value(d1, d2)
+print(dis)

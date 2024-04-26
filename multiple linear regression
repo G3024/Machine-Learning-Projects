@@ -1,0 +1,27 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+from sklearn import linear_model
+
+
+data = pd.read_csv("2data.csv")
+'''
+   area  bedrooms  age   price
+0  2600       3.0   20  550000
+1  3000       4.0   15  565000
+2  3200       NaN   18  610000
+3  3600       3.0   30  595000
+4  4000       5.0    8  760000
+5  4100       6.0    8  810000
+'''
+
+
+# fill the NaN area with the median of the bedrooms
+data.bedrooms = data.bedrooms.fillna(data.bedrooms.median())
+
+
+
+# make a linear model
+reg = linear_model.LinearRegression()
+reg.fit(data.drop('price',axis='columns'),data.price)
+print(reg.predict([[3000, 10, 3]]))

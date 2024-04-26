@@ -1,0 +1,29 @@
+import numpy as np
+
+def gradien_descent(x,y):
+    m_curr = b_curr = 0
+    # 1. setting the iterations 
+    interations = 10000
+    n = len(x)
+    learning_rate = 0.001
+    
+    for i in range(interations):
+        y_predicted = m_curr * x + b_curr # as known as the linear model formula ( y = m * x + b )
+        m_deriative = -(2/n) * sum(x* (y-y_predicted))
+        b_deriative = -(2/n) * sum(y-y_predicted)
+        m_curr = m_curr - learning_rate * m_deriative   
+        b_curr =  b_curr - learning_rate * b_deriative  
+        
+        cost = (1/n) * sum([val**2 for val in (y-y_predicted)])
+        
+        # print it all  
+        print(" m: {}, '\n'b: {}, '\n'iteration: {}, '\n'cost: {},'\n'i: {}'\n''\n''\n'".format(m_curr, b_curr, interations, cost, i)) 
+        
+x = np.array([1, 3, 5, 7, 8, 10])
+y = np.array([10, 13, 14.5, 15.5, 18.8, 20])
+
+gradien_descent(x, y)
+
+
+
+print(1+2.3)

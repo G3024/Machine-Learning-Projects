@@ -1,0 +1,58 @@
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LinearRegression, LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.datasets import load_diabetes
+from sklearn.svm import SVC
+
+data = load_diabetes()
+# ['DESCR', 'data', 'data_filename', 'data_module', 'feature_names', 'frame', 'target', 'target_filename']
+
+
+from sklearn.model_selection import KFold, train_test_split
+X_train, X_test, y_train, y_test = train_test_split(data.data, data.target, train_size=0.3)
+
+
+# model
+linear_ = LinearRegression()
+Logistic_ = LogisticRegression()
+RF_ = RandomForestClassifier(n_estimators=3)
+svc_ = SVC(gamma='auto')
+
+
+KF_ = KFold(n_splits=3)
+for train_index, test_index in KF_.split([1,2,3,4,5,6,7,8,9]):
+    print(train_index, test_index)
+
+
+def get_score(model, X_train, X_test, y_train, y_test):
+    model.fit(X_train, y_train)
+    return model.score(X_test, y_test)
+
+from sklearn.model_selection import StratifiedKFold
+folds = StratifiedKFold(n_splits=5)
+
+score_log = []
+score_rf = []
+score_svm = []
+
+for train_index, test_index in folds.split(data.data, data.target):
+    X_train, X_test, y_train, y_test = data.data[train_index], data.data[test_index], data.target[train_index], data.target[test_index]
+    
+    score_log.append(get_score(LogisticRegression(), X_train, X_test, y_train, y_test))
+    score_rf.append(get_score(RandomForestClassifier(), X_train, X_test, y_train, y_test))
+    score_svm.append(get_score(SVC(), X_train, X_test, y_train, y_test))
+    
+from sklearn.model_selection import cross_val_score
+log_score = cross_val_score(LogisticRegression(),data.data, data.target)
+# [0.01123596 0.01123596 0.01136364 0.01136364 0.01136364]
+score_log # [0.011235, 0.01123, 0.01136, 0.0113636, 0.0113636]
+
+SVC_c = cross_val_score(SVC(), data.data, data.target)
+# [0.01123596 0.01123596 0.02272727 0.02272727 0.02272727]
+
+RF_ = cross_val_score(RandomForestClassifier(), data.data, data.target)
+# [0.         0.         0.02272727 0.         0.03409091]
+
+print(np.average(log_score)) #0.0113
+print(np.average(SVC_c)) #0.0181

@@ -1,0 +1,65 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_digits
+
+digits = load_digits()
+print(digits)
+'''['DESCR', 'data', 'feature_names', 'frame', 'images', 'target', 'target_names']'''
+
+plt.gray()
+for i in range(4):
+    plt.matshow(digits.images[i])
+    
+# making into a single dataframe
+data = pd.DataFrame(digits.data)
+'''
+0    1     2     3     4     5    6    7    8    9     10  ...    53   54   55   56   57   58    59    60    61   62   63
+0     0.0  0.0   5.0  13.0   9.0   1.0  0.0  0.0  0.0  0.0  13.0  ...  12.0  0.0  0.0  0.0  0.0  6.0  13.0  10.0   0.0  0.0  0.0
+1     0.0  0.0   0.0  12.0  13.0   5.0  0.0  0.0  0.0  0.0   0.0  ...   6.0  0.0  0.0  0.0  0.0  0.0  11.0  16.0  10.0  0.0  0.0
+.... etc
+[1797 rows x 64 columns]
+'''
+
+# make a new columns name target
+
+data['target'] = digits.target
+'''
+0
+1       1
+2       2
+3       3
+4       4
+       ..
+1792    9
+1793    0
+1794    8
+1795    9
+1796    8
+'''
+
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(data.drop(['target'], axis='columns'), digits.target, train_size=0.2)
+
+
+from sklearn.ensemble import RandomForestClassifier
+model = RandomForestClassifier(n_estimators=50)
+model.fit(X_train, y_train)
+print(model.get_params())
+print(model.score(X_test, y_test))
+'''
+{'bootstrap': True, 'ccp_alpha': 0.0, 'class_weight': None, 'criterion': 'gini', 'max_depth': None, 'max_features': 'sqrt', 'max_leaf_nodes': None, 'max_samples': None, 'min_impurity_decrease': 0.0, 'min_samples_leaf': 1, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'n_estimators': 100, 'n_jobs': None, 'oob_score': False, 'random_state': None, 'verbose': 0, 'warm_start': False}
+'''
+print(model.predict(X_test))
+
+y_predicted = model.predict(X_test)
+from sklearn.metrics import confusion_matrix
+confusion_matrix_ = confusion_matrix(y_test , y_predicted)
+
+
+import seaborn as sn
+plt.figure(figsize = (10,7))
+sn.heatmap(confusion_matrix_, annot=True)
+plt.xlabel('predicted')
+plt.ylabel('truth')
+plt.show()

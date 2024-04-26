@@ -1,0 +1,30 @@
+import pandas as pd
+
+data = pd.read_csv('5.dummy.csv')
+
+
+# get dummies of the car model
+dum = pd.get_dummies(data['Car Model'])
+print(dum)
+
+# concat all the data once again
+conc = pd.concat([data, dum], axis='columns')
+print(conc)
+# delete the Car Model as Rows
+del_car_model = conc.drop("Car Model", axis='columns')
+print(del_car_model)
+
+# getting price as the y
+y = data['Sell Price($)']
+
+
+# delete the sel price of the car
+x = del_car_model.drop("Sell Price($)", axis='columns')
+# make the model
+from sklearn.linear_model import LinearRegression
+model = LinearRegression()
+
+model.fit(x,y)
+
+print(model.predict([[45000,4,0,0,1]]))
+print(model.score(x,y))

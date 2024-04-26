@@ -1,0 +1,74 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_digits
+
+# our datatest
+digits = load_digits()
+
+# cheecking what we have
+print(dir(digits))
+'''['DESCR', 'data', 'feature_names', 'frame', 'images', 'target', 'target_names']'''
+
+print(digits.data[0])
+
+
+# let see how is it look for getting images
+plt.gray()
+for i in range(5):
+    plt.matshow(digits.images[i])
+
+
+# let's get the answer of the plt.matshow(digits.images[i]) results of
+result = digits.target[0:5]
+print(result) # [0 1 2 3 4]
+
+
+
+
+from sklearn.model_selection import train_test_split
+x_test, x_train, y_test, y_train = train_test_split(digits.data, digits.target, test_size=0.2)
+
+
+from sklearn.linear_model import LogisticRegression
+model = LogisticRegression()
+model.fit(x_train, y_train)
+
+
+# lets predict
+plt.matshow(digits.images[67]) # the result of the picture is 6
+''' then we predict with our model and get the score of the predict'''
+
+print(model.predict([digits.data[67]])) # [6]
+print(model.predict(digits.data[0:5])) # [0 1 2 3 4]
+
+
+
+# seeing the confusion matrix
+y_predicted = model.predict(x_test)
+print(model.score(x_test, y_test)) # 0.95%
+
+from sklearn.metrics import confusion_matrix
+cm = confusion_matrix(y_test, y_predicted)
+'''print(cm)'''
+'''
+[[147   0   1   0   2   2   0   0   0   0]
+ [  0 129   6   0   0   2   1   0   4   5]
+ [  0   0 131   3   0   0   0   1   0   0]
+ [  0   2   1 134   0   3   0   4   2   2]
+ [  0   4   0   0 132   0   1   0   3   1]
+ [  1   0   1   1   0 141   1   0   0   1]
+ [  1   3   0   0   0   1 143   0   0   0]
+ [  0   0   0   0   0   0   0 134   0   2]
+ [  0   8   0   2   0   3   3   2 117   2]
+ [  0   1   0   0   0   3   0   1   2 140]]
+'''
+
+
+# visualization data with seaborn
+import seaborn as sn
+plt.figure(figsize = (10,3))
+sn.heatmap(cm, annot=True)
+plt.xlabel("predicted")
+plt.ylabel('Truth')
+plt.plot()

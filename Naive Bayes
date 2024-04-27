@@ -1,0 +1,47 @@
+import pandas as pd
+
+dt = pd.read_csv('titanic.csv')
+
+# dropping
+dt = dt.drop(['PassengerId', 'Name', 'SibSp', 'Parch', 'Ticket', 'Cabin', 'Embarked'], axis='columns')
+
+
+# taking survived as the target
+dt.drop(['Survived'], axis='columns')
+target = dt.Survived
+
+# encode the sex label with 1 and 0
+# dt.Sex = dt.Sex.map({'male':1, 'female':2})
+''' if you use code right there it will not make "female" and "male" as the columns name, it will start with 1 and 2, so dont need to use it'''
+
+# get the sex as dummies
+dummies = pd.get_dummies(dt.Sex)
+
+dt = pd.concat([dt, dummies], axis='columns')
+
+
+# drop sex and male/female
+dt.drop(['male', 'Sex'], axis='columns', inplace=True)
+
+
+# checking is there any NaN in the dt DataFrame
+dt.columns[dt.isna().any()]
+# fill NaN in the Age columns
+dt.Age = dt.Age.fillna(dt.Age.mean())
+
+
+
+# doing train_test_split
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(dt, target, train_size=0.3, random_state=10)
+
+from sklearn.gaussian_process import GaussianProcessClassifier
+model = GaussianProcessClassifier()
+model.fit(X_train, y_train)
+model.score(X_test, y_test)
+# 0.7612179487179487
+
+from sklearn.model_selection import cross_val_score
+crs = cross_val_score(GaussianProcessClassifier(),X_test, y_test, cv=5)
+print(crs)
+# [0.752      0.792      0.792      0.792      0.75806452]
